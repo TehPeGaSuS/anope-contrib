@@ -22,7 +22,7 @@ networkinfo
 };
 ```
 
-Configuration (`services.conf`):
+Configuration (`anope.conf`):
 ```
 module { name = "hs_nethost"; prefix = "user/"; suffix = ""; hashprefix = "/x-"; setifnone = true; }
 command { service = "HostServ"; name = "SETNETHOSTS"; command = "hostserv/setnethosts"; permission = "hostserv/setnethosts"; }
