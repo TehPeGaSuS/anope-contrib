@@ -71,7 +71,7 @@ static void SetNetHost(NickAlias *na, bool force = false)
 	Anope::string vhost;
 	bool usehash = false;
 
-	Anope::string valid_nick_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
+	Anope::string valid_nick_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-";
 
 	// This operates on nick, not na->nick, so that changes can be made later.
 	// Invalid characters become '-', but runs of them (e.g. "|||Foo|||BAr|||")
