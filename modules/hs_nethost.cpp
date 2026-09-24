@@ -74,13 +74,40 @@ static void SetNetHost(NickAlias *na, bool force = false)
 	Anope::string valid_nick_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
 
 	// This operates on nick, not na->nick, so that changes can be made later.
-	for (auto &c : nick)
+	// Invalid characters become '-', but runs of them (e.g. "|||Foo|||BAr|||")
+	// would otherwise collapse into ugly runs of dashes, so only keep a dash
+	// if the previous kept character wasn't already one.
+	Anope::string beautified;
+	char last = '\0';
+	for (auto c : nick)
 	{
 		if (valid_nick_chars.find(c) == Anope::string::npos)
 		{
 			usehash = true;
 			c = '-';
 		}
+
+		if (c == '-' && last == '-')
+			continue;
+
+		beautified.push_back(c);
+		last = c;
+	}
+
+	// Trim any leading/trailing dashes left over from invalid characters at
+	// the edges of the nick (e.g. "|||Foo|||BAr|||" -> "Foo-BAr", not "-Foo-BAr-")
+	size_t start = beautified.find_first_not_of("-");
+	if (start == Anope::string::npos)
+		nick = ""; // the whole nick was invalid characters
+	else
+		nick = beautified.substr(start, beautified.find_last_not_of("-") - start + 1);
+
+	// If nothing usable is left of the nick, fall back to just the hash so we
+	// don't end up with a vhost that's only the bare prefix/suffix.
+	if (nick.empty())
+	{
+		usehash = true;
+		nick = "user";
 	}
 
 	// Construct vhost
